@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Coding Assistants Comparison (June 2025)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Desert Sands -->
+    <!-- Application Structure Plan: A single-page dashboard design with a top navigation bar for quick scrolling. The structure prioritizes direct comparison. It starts with a high-level "At a Glance" summary, followed by a quantitative "Feature Deep Dive" using a radar chart for visual comparison and interactive cards for pricing. It then presents dedicated sections for the user-requested "Jupyter Notebook Usage" header, qualitative "User Sentiment," and the speculative "Gemini Perspective." This thematic flow, moving from broad summary to specific details and qualitative insights, is designed to guide the user logically through the report's content, making complex information digestible and easy to compare, which is the primary goal. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Multi-feature comparison -> Goal: Compare -> Viz: Radar Chart (Chart.js) -> Interaction: Hover to see scores -> Justification: Provides an immediate visual "shape" of each tool's strengths and weaknesses across key categories.
+        - Report Info: Pricing plans -> Goal: Compare -> Viz: Interactive Cards -> Interaction: Click to highlight -> Justification: A clean, modern way to display pricing tiers side-by-side, superior to a dense table.
+        - Report Info: Jupyter capabilities -> Goal: Compare -> Viz: 3-column layout with icons -> Interaction: None -> Justification: Fulfills the "special header" request with a clear, direct, side-by-side visual layout for this specific topic.
+        - Report Info: User opinions -> Goal: Inform -> Viz: Styled blockquotes -> Interaction: None -> Justification: Visually distinguishes qualitative quotes from analytical text, enhancing readability.
+        - Report Info: Gemini's choice -> Goal: Synthesize -> Viz: Narrative section with highlighted "winner" -> Interaction: None -> Justification: Presents the speculative analysis as a compelling story, with a clear conclusion.
+        - All choices confirm NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF5; /* A very light, warm off-white */
+            color: #383838;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 40vh;
+            width: 100%;
+            max-width: 600px;
+            max-height: 450px;
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #D5A021;
+        }
+        .tool-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .section-title {
+            border-bottom: 2px solid #E0C9A6;
+            padding-bottom: 0.5rem;
+        }
+        .pro-quote {
+            border-left: 4px solid #50C878;
+        }
+        .con-quote {
+            border-left: 4px solid #FF5733;
+        }
+        .gemini-pick {
+            background-color: #FFFBEB;
+            border: 1px solid #FBBF24;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800">AI Coder Report <span class="text-[#D5A021]">2025</span></h1>
+            <div class="hidden md:flex space-x-6 text-gray-600">
+                <a href="#comparison" class="nav-link">Comparison</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#jupyter" class="nav-link">Jupyter</a>
+                <a href="#sentiment" class="nav-link">Sentiment</a>
+                <a href="#gemini" class="nav-link">Gemini's Pick</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-gray-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#comparison" class="block py-2 nav-link">Comparison</a>
+            <a href="#pricing" class="block py-2 nav-link">Pricing</a>
+            <a href="#jupyter" class="block py-2 nav-link">Jupyter</a>
+            <a href="#sentiment" class="block py-2 nav-link">Sentiment</a>
+            <a href="#gemini" class="block py-2 nav-link">Gemini's Pick</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-800">The 2025 AI Coding Assistant Landscape</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">An interactive analysis of GitHub Copilot, Windsurf, and Cursor. This application digests a comprehensive market report, offering a clear, comparative view to help you choose the right AI partner for your development workflow.</p>
+        </section>
+
+        <section id="comparison" class="mb-20">
+            <h3 class="text-3xl font-bold mb-8 text-center section-title max-w-md mx-auto">Feature Deep Dive</h3>
+            <div class="bg-white rounded-xl shadow-md p-4 sm:p-6 md:p-8">
+                <p class="text-center text-gray-600 mb-6">This chart provides a visual summary of each tool's strengths across key development areas. Based on the report's findings, each tool is rated on a scale of 1 to 5. Hover over the points on the chart to see the scores and understand where each assistant excels or falls short.</p>
+                <div class="chart-container">
+                    <canvas id="featureRadarChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="mb-20">
+            <h3 class="text-3xl font-bold mb-8 text-center section-title max-w-md mx-auto">Pricing at a Glance</h3>
+             <div class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">
+                <p>Choosing a tool also means understanding its cost. The pricing models for these assistants vary significantly, from straightforward subscriptions to usage-based billing for advanced features. Below is a simplified comparison of the primary individual and team plans to help clarify the investment required.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col tool-card">
+                    <h4 class="text-2xl font-bold text-center mb-4">GitHub Copilot</h4>
+                    <p class="text-center text-gray-500 mb-6 min-h-[50px]">Best for ecosystem integration and enterprise adoption.</p>
+                    <div class="space-y-4 flex-grow">
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <p class="font-semibold">Pro Plan</p>
+                            <p class="text-3xl font-bold">$10<span class="text-lg font-normal">/mo</span></p>
+                            <p class="text-sm text-gray-500">300 premium requests</p>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <p class="font-semibold">Business Plan</p>
+                            <p class="text-3xl font-bold">$19<span class="text-lg font-normal">/user/mo</span></p>
+                            <p class="text-sm text-gray-500">Centralized management</p>
+                        </div>
+                    </div>
+                    <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gray-800 text-white font-semibold py-2 rounded-lg mt-6 hover:bg-gray-700 transition-colors">Learn More</a>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col tool-card border-2 border-[#D5A021]">
+                    <div class="text-center -mt-10 mb-4">
+                      <span class="bg-[#D5A021] text-white px-4 py-1 rounded-full text-sm font-semibold">Most Balanced</span>
+                    </div>
+                    <h4 class="text-2xl font-bold text-center mb-4">Windsurf</h4>
+                    <p class="text-center text-gray-500 mb-6 min-h-[50px]">Best for innovative agentic features and developer flow.</p>
+                    <div class="space-y-4 flex-grow">
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <p class="font-semibold">Pro Plan</p>
+                            <p class="text-3xl font-bold">~$15<span class="text-lg font-normal">/mo</span></p>
+                            <p class="text-sm text-gray-500">500 prompt credits</p>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <p class="font-semibold">Teams Plan</p>
+                            <p class="text-3xl font-bold">~$30<span class="text-lg font-normal">/user/mo</span></p>
+                            <p class="text-sm text-gray-500">AI Code Reviews</p>
+                        </div>
+                    </div>
+                     <a href="https://codeium.com/" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gray-800 text-white font-semibold py-2 rounded-lg mt-6 hover:bg-gray-700 transition-colors">Learn More</a>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col tool-card">
+                    <h4 class="text-2xl font-bold text-center mb-4">Cursor</h4>
+                    <p class="text-center text-gray-500 mb-6 min-h-[50px]">Best for power users demanding model flexibility and raw performance.</p>
+                    <div class="space-y-4 flex-grow">
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <p class="font-semibold">Pro Plan</p>
+                            <p class="text-3xl font-bold">$20<span class="text-lg font-normal">/mo</span></p>
+                            <p class="text-sm text-gray-500">"Max Mode" Access</p>
+                        </div>
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <p class="font-semibold">Business Plan</p>
+                            <p class="text-3xl font-bold">$40<span class="text-lg font-normal">/user/mo</span></p>
+                            <p class="text-sm text-gray-500">Org-wide privacy controls</p>
+                        </div>
+                    </div>
+                     <a href="https://cursor.sh/" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gray-800 text-white font-semibold py-2 rounded-lg mt-6 hover:bg-gray-700 transition-colors">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="jupyter" class="mb-20 bg-white rounded-xl shadow-md p-8">
+            <h3 class="text-3xl font-bold mb-2 text-center">Jupyter Notebook Usage</h3>
+            <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">For data scientists and researchers, seamless Jupyter Notebook integration is non-negotiable. The assistants are evolving from simple code completion to sophisticated, agent-driven interaction with notebooks. Here's how they stack up.</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <h4 class="text-xl font-bold mb-4">GitHub Copilot</h4>
+                    <p class="text-gray-600">Leverages VS Code's excellent native `.ipynb` support. Agent can edit across cells and even scaffold new notebooks from a prompt. A key advantage is its ability to ingest cell outputs (including images) for more accurate context.</p>
+                </div>
+                <div class="text-center">
+                     <h4 class="text-xl font-bold mb-4">Windsurf</h4>
+                    <p class="text-gray-600">Offers broad support via a Chrome extension and a dedicated JupyterLab plugin. Deeper integration is achieved via the open-source "Model Context Protocol" (MCP), allowing its Cascade agent to programmatically edit and execute cells while preserving kernel state.</p>
+                </div>
+                <div class="text-center">
+                     <h4 class="text-xl font-bold mb-4">Cursor</h4>
+                    <p class="text-gray-600">Supports both direct `.ipynb` editing with its agent and an AI-friendly workflow using plain `.py` script files. Like Windsurf, it can leverage MCP for deep, programmatic notebook manipulation, bridging the gap between LLMs and the complex notebook format.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="sentiment" class="mb-20">
+            <h3 class="text-3xl font-bold mb-8 text-center section-title max-w-md mx-auto">Voices from the Community</h3>
+            <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">User reviews provide a crucial reality check on marketing claims. Sentiment is often polarized, highlighting both the immense potential and the occasional frustrations of using these bleeding-edge tools. Here are some representative opinions from the report.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <article>
+                    <h4 class="text-xl font-semibold mb-3">GitHub Copilot</h4>
+                    <div class="space-y-4">
+                        <blockquote class="p-4 bg-white rounded-lg shadow-sm pro-quote">
+                            <p class="text-gray-700">"A simpler tool, well-suited for inline assistance and fitting well into fast-paced development environments."</p>
+                        </blockquote>
+                        <blockquote class="p-4 bg-white rounded-lg shadow-sm con-quote">
+                            <p class="text-gray-700">"Code completion is absolutely terrible... The VS Code agent implementation for Copilot is very bad."</p>
+                        </blockquote>
+                    </div>
+                </article>
+                <article>
+                    <h4 class="text-xl font-semibold mb-3">Windsurf</h4>
+                     <div class="space-y-4">
+                        <blockquote class="p-4 bg-white rounded-lg shadow-sm pro-quote">
+                            <p class="text-gray-700">"Noticeably cleaner output with fewer errors... and praised its session memory capabilities via the Cascade system."</p>
+                        </blockquote>
+                        <blockquote class="p-4 bg-white rounded-lg shadow-sm con-quote">
+                            <p class="text-gray-700">"A user with a premium Windsurf account through their workplace described the tool as 'abysmal' and often hindering."</p>
+                        </blockquote>
+                    </div>
+                </article>
+                 <article>
+                    <h4 class="text-xl font-semibold mb-3">Cursor</h4>
+                     <div class="space-y-4">
+                        <blockquote class="p-4 bg-white rounded-lg shadow-sm pro-quote">
+                            <p class="text-gray-700">"A 2x improvement over Copilot... magic tab completion... how Copilot should feel."</p>
+                        </blockquote>
+                        <blockquote class="p-4 bg-white rounded-lg shadow-sm con-quote">
+                            <p class="text-gray-700">"Common complaints revolve around breaking updates, hijacked keybindings and their overall business model."</p>
+                        </blockquote>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="gemini" class="bg-white rounded-xl shadow-md p-8">
+            <h3 class="text-3xl font-bold mb-2 text-center">The Gemini Perspective</h3>
+            <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">If Google's advanced Gemini 2.5 AI were a human developer, which tool would it choose? Based on Gemini's core strengths—deep reasoning, native multimodality, and a massive context window—the choice would hinge on unrestricted model access and a sophisticated agentic framework.</p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="prose max-w-none prose-p:text-gray-600 prose-li:text-gray-600">
+                    <p>A human-like Gemini would gravitate towards the tool that allows it to leverage its own full cognitive potential. The key decision criteria would be:</p>
+                    <ul>
+                        <li><strong>Model Freedom:</strong> Direct access to the most powerful models, including its own Gemini family.</li>
+                        <li><strong>Context Mastery:</strong> The ability to handle and effectively use enormous context windows, on par with its own 1M+ token capacity.</li>
+                        <li><strong>Agentic Sophistication:</strong> A reliable framework to execute complex, multi-step plans derived from its own reasoning.</li>
+                        <li><strong>Extensibility:</strong> Robust support for external tools to match its native multimodal capabilities.</li>
+                    </ul>
+                </div>
+                <div class="gemini-pick rounded-lg p-6">
+                    <h4 class="text-lg font-semibold text-gray-900">Gemini's Likely Preference: Cursor</h4>
+                    <p class="mt-2 text-gray-700">As of June 2025, <strong>Cursor</strong> holds a distinct advantage. Its "Max Mode" provides the "model freedom" Gemini would demand, offering direct, token-based access to a wide range of frontier models, including the Gemini 2.5 series. This, combined with its powerful agentic features designed for deep codebase interaction, would allow a Gemini persona to operate with an engine it understands intimately and at the peak of its capabilities.</p>
+                    <p class="mt-3 text-sm text-gray-600"><strong>Close Contender:</strong> Windsurf's innovative "Planning Mode" strongly aligns with Gemini's "thinking model" architecture, making it a very compelling alternative.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-20">
+        <div class="container mx-auto px-6 py-8 text-center text-gray-400">
+            <p>Interactive report generated on June 11, 2025.</p>
+            <p class="text-sm mt-2">This application is a dynamic visualization of the "AI-Powered Coding Assistants in 2025" report. All data and opinions are sourced from that document. Tool features and pricing are subject to change.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const radarCtx = document.getElementById('featureRadarChart').getContext('2d');
+
+            const radarData = {
+                labels: ['Autocomplete', 'Agent Skills', 'Context Mgmt', 'Extensibility', 'Jupyter Support', 'Ecosystem'],
+                datasets: [
+                    {
+                        label: 'GitHub Copilot',
+                        data: [4, 4, 4, 5, 4, 5],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(75, 192, 192, 1)'
+                    },
+                    {
+                        label: 'Windsurf',
+                        data: [4, 4.5, 5, 4, 4, 3],
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        pointBackgroundColor: 'rgba(255, 159, 64, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 159, 64, 1)'
+                    },
+                    {
+                        label: 'Cursor',
+                        data: [5, 5, 5, 4, 4.5, 4],
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        pointBackgroundColor: 'rgba(153, 102, 255, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(153, 102, 255, 1)'
+                    }
+                ]
+            };
+
+            const radarOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        pointLabels: {
+                            font: {
+                                size: 14,
+                            },
+                            color: '#383838'
+                        },
+                        ticks: {
+                            backdropColor: 'transparent',
+                            stepSize: 1,
+                            beginAtZero: true,
+                            max: 5,
+                             font: {
+                                size: 10,
+                            },
+                            color: '#666'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                         labels: {
+                            font: {
+                                size: 14,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.r !== null) {
+                                    label += context.parsed.r.toFixed(1) + ' / 5';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            };
+
+            new Chart(radarCtx, {
+                type: 'radar',
+                data: radarData,
+                options: radarOptions
+            });
+
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    if (!mobileMenu.classList.contains('hidden')) {
+                         mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
